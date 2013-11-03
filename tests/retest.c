@@ -547,6 +547,16 @@ test_comp(const char *re, int flags, int ret)
 /* To enable tests for known bugs, set this to 1. */
 #define KNOWN_BUG 0
 
+#if defined(_MSC_VER)
+#define en_US "English_US" /* "enu_US.1252" */
+#define ja_JP_EUCJP "Japanese_Japan.20932" /* "jpn_JPN.20932" */
+#define ja_JP_SJIS "Japanese_Japan" /* "jpn_JPN.932" */
+#else
+#define en_US "en_US.ISO-8859-1"
+#define ja_JP_EUCJP "ja_JP.eucjp"
+#define ja_JP_SJIS "ja_JP.sjis"
+#endif
+
 int
 main(int argc, char **argv)
 {
@@ -554,9 +564,9 @@ main(int argc, char **argv)
 #ifdef WRETEST
   /* Need an 8-bit locale.  Or move the two tests with non-ascii
      characters to the localized internationalization tests.  */
-  if (setlocale(LC_CTYPE, "en_US.ISO-8859-1") == NULL)
-    fprintf(stderr, "Could not set locale en_US.ISO-8859-1.  Expect some\n"
-		    "`Invalid or incomplete multi-byte sequence' errors.\n");
+  if (setlocale(LC_CTYPE, en_US) == NULL)
+    fprintf(stderr, "Failed to setlocale(LC_TYPE, \"%s\").  Expect some\n"
+		    "`Invalid or incomplete multi-byte sequence' errors.\n", en_US);
 #endif /* WRETEST */
   /* Large number of macros in one regexp. */
   test_comp("[A-Z]\\d\\s?\\d[A-Z]{2}|[A-Z]\\d{2}\\s?\\d[A-Z]{2}|[A-Z]{2}\\d"
@@ -1629,32 +1639,69 @@ main(int argc, char **argv)
    * Internationalization tests.
    */
 
-  /* This same test with the correct locale is below. */
-  test_comp("µ°+", REG_EXTENDED, 0);
-  test_exec("§≥§Œæﬁ§œ°¢µ°°¶Õ¯ ÿ¿≠°¶•ª•≠", 0, REG_OK, 10, 13, END);
+  /*
+  Japanese text test. Test SHIFT-JIS and EUC-JP encodings. The text in both
+  cases is the translation of "The quick brown fox jumps over the lazy dog"
+  to Japanese using google translate. In en-US locale both tests below will
+  match 3 bytes/chars. When proper locale is set, same statements will match
+  one two-byte Japanese hieroglyph.
+  */
 
-#if !defined(WIN32) && !defined(__OpenBSD__)
-  if (setlocale(LC_CTYPE, "en_US.ISO-8859-1") != NULL)
+  //SHIFT-JIS
+  test_comp("ÉÉ+", REG_EXTENDED, 0);
+  test_exec("ë”ëƒÇ»å¢ÇÃë¨Ç¢íÉêFÇÃÉLÉcÉlÉWÉÉÉìÉv", 0, REG_OK, 28, 31, END);
+
+  //EUC-JP
+  test_comp("∏§+", REG_EXTENDED, 0);
+  test_exec("¬’¬∆§ ∏§§Œ¬Æ§§√„øß§Œ•≠•ƒ•Õ•∏•„•Û•◊", 0, REG_OK, 6, 9, END);
+
+#if !defined(__OpenBSD__)
+  if (setlocale(LC_CTYPE, en_US) != NULL)
     {
-      printf("\nTesting LC_CTYPE en_US.ISO-8859-1\n");
+      printf("\nTesting LC_CTYPE \"%s\"\n", en_US);
       test_comp("aBCdeFghiJKlmnoPQRstuvWXyZÂ‰ˆ", REG_ICASE, 0);
       test_exec("abCDefGhiJKlmNoPqRStuVwXyz≈ƒ÷", 0, REG_OK, 0, 29, END);
     }
+  else
+    {
+      printf("\nFailed to setlocale(LC_TYPE, \"%s\")\n", en_US);
+    }
 
 #ifdef TRE_MULTIBYTE
-  if (setlocale(LC_CTYPE, "ja_JP.eucjp") != NULL)
+  if (setlocale(LC_CTYPE, ja_JP_EUCJP) != NULL)
     {
-      printf("\nTesting LC_CTYPE ja_JP.eucjp\n");
-      /* I tried to make a test where implementations not aware of multibyte
-	 character sets will fail.  I have no idea what the japanese text here
-	 means, I took it from http://www.ipsec.co.jp/. */
-      test_comp("µ°+", REG_EXTENDED, 0);
-      test_exec("§≥§Œæﬁ§œ°¢µ°°¶Õ¯ ÿ¿≠°¶•ª•≠", 0, REG_OK, 10, 12, END);
+      printf("\nTesting LC_CTYPE \"%s\"\n", ja_JP_EUCJP);
+
+      //EUC-JP
+      test_comp("∏§+", REG_EXTENDED, 0);
+      test_exec("¬’¬∆§ ∏§§Œ¬Æ§§√„øß§Œ•≠•ƒ•Õ•∏•„•Û•◊", 0, REG_OK, 6, 8, END);
 
       test_comp("a", REG_EXTENDED, 0);
       test_nexec("foo\000bar", 7, 0, REG_OK, 5, 6, END);
       test_comp("c$", REG_EXTENDED, 0);
       test_exec("abc", 0, REG_OK, 2, 3, END);
+    }
+  else
+    {
+      printf("\nFailed to setlocale(LC_TYPE, \"%s\")\n", ja_JP_EUCJP);
+    }
+
+  if (setlocale(LC_CTYPE, ja_JP_SJIS) != NULL)
+    {
+      printf("\nTesting LC_CTYPE \"%s\"\n", ja_JP_SJIS);
+
+      //SHIFT-JIS
+      test_comp("ÉÉ+", REG_EXTENDED, 0);
+      test_exec("ë”ëƒÇ»å¢ÇÃë¨Ç¢íÉêFÇÃÉLÉcÉlÉWÉÉÉìÉv", 0, REG_OK, 28, 30, END);
+
+      test_comp("a", REG_EXTENDED, 0);
+      test_nexec("foo\000bar", 7, 0, REG_OK, 5, 6, END);
+      test_comp("c$", REG_EXTENDED, 0);
+      test_exec("abc", 0, REG_OK, 2, 3, END);
+    }
+  else
+    {
+      printf("\nFailed to setlocale(LC_TYPE, \"%s\")\n", ja_JP_SJIS);
     }
 #endif /* TRE_MULTIBYTE */
 #endif
