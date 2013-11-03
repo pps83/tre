@@ -52,6 +52,8 @@ char *alloca ();
 #include "tre.h"
 #include "xmalloc.h"
 
+#ifdef TRE_APPROX
+
 #define TRE_M_COST	0
 #define TRE_M_NUM_INS	1
 #define TRE_M_NUM_DEL	2
@@ -810,3 +812,5 @@ tre_tnfa_run_approx(const tre_tnfa_t *tnfa, const void *string, int len,
 
   return match_eo >= 0 ? REG_OK : REG_NOMATCH;
 }
+
+#endif // TRE_APPROX
