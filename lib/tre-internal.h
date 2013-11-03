@@ -133,6 +133,21 @@ typedef short tre_cint_t;
 
 #if defined(TRE_WCHAR) && defined(HAVE_ISWCTYPE) && defined(HAVE_WCTYPE)
 #define TRE_USE_SYSTEM_WCTYPE 1
+#ifdef _MSC_VER
+#ifdef _DLL
+#ifdef _DEBUG
+#pragma comment(lib, "msvcprtd.lib")
+#else
+#pragma comment(lib, "msvcprt.lib")
+#endif
+#else
+#ifdef _DEBUG
+#pragma comment(lib, "libcpmtd.lib")
+#else
+#pragma comment(lib, "libcpmt.lib")
+#endif
+#endif
+#endif //_MSC_VER
 #endif
 
 #ifdef TRE_USE_SYSTEM_WCTYPE
