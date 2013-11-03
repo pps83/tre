@@ -6,20 +6,9 @@
 
 */
 
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif /* HAVE_CONFIG_H */
-
-#include <string.h>
-#ifdef HAVE_WCHAR_H
-#include <wchar.h>
-#endif /* HAVE_WCHAR_H */
-#ifdef HAVE_WCTYPE_H
-#include <wctype.h>
-#endif /* HAVE_WCTYPE_H */
-
 #include "tre-internal.h"
-#include "tre.h"
+#include <string.h>
+
 
 #ifdef HAVE_GETTEXT
 #include <libintl.h>

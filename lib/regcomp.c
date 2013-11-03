@@ -6,17 +6,12 @@
 
 */
 
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif /* HAVE_CONFIG_H */
-
+#include "tre-internal.h"
 #include <string.h>
 #include <errno.h>
 #include <stdlib.h>
-
-#include "tre.h"
-#include "tre-internal.h"
 #include "xmalloc.h"
+
 
 int
 tre_regncomp(regex_t *preg, const char *regex, size_t n, int cflags)

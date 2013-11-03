@@ -13,19 +13,13 @@
    regexp implementation.
 */
 
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif /* HAVE_CONFIG_H */
-
+#include "tre-internal.h"
 #include <stdlib.h>
 #include <stdio.h>
 #include <stdarg.h>
 #include <string.h>
 #include <sys/types.h>
 #include <locale.h>
-#ifdef HAVE_MALLOC_H
-#include <malloc.h>
-#endif /* HAVE_MALLOC_H */
 #include <regex.h>
 
 #ifdef TRE_VERSION
@@ -36,7 +30,6 @@
 #define xmalloc malloc
 #define xfree free
 #endif /* !TRE_VERSION */
-#include "tre-internal.h"
 
 #ifdef WRETEST
 #include <wchar.h>

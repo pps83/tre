@@ -13,21 +13,17 @@
 */
 
 
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif /* HAVE_CONFIG_H */
+#include "tre-internal.h"
 #include <stdio.h>
 #include <assert.h>
 #include <string.h>
-
-#include "tre-internal.h"
 #include "tre-mem.h"
 #include "tre-stack.h"
 #include "tre-ast.h"
 #include "tre-parse.h"
 #include "tre-compile.h"
-#include "tre.h"
 #include "xmalloc.h"
+
 
 /*
   Algorithms to setup tags so that submatch addressing can be done.

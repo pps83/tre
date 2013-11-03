@@ -6,15 +6,12 @@
 
 */
 
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif /* HAVE_CONFIG_H */
+#include "tre-internal.h"
 #include <stdlib.h>
 #include <assert.h>
-
-#include "tre-internal.h"
 #include "tre-stack.h"
 #include "xmalloc.h"
+
 
 union tre_stack_item {
   void *voidptr_value;

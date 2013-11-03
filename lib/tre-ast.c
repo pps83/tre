@@ -6,13 +6,11 @@
 
 */
 
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif /* HAVE_CONFIG_H */
+#include "tre-internal.h"
 #include <assert.h>
-
 #include "tre-ast.h"
 #include "tre-mem.h"
+
 
 tre_ast_node_t *
 tre_ast_new_node(tre_mem_t mem, tre_ast_type_t type, size_t size)
